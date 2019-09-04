@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello User!{% endblock %}
+
+{% block body %}
+    <style>
+
+    </style>
+    <div id="main-container-div">
+        <div id="title-div">
+            <h1 id="title">{{ conference.title }}</h1> by <p id="creator">{{ conference.creator.lastname }}</p>
+        </div>
+        <div id="conf-text-div">
+            {{ conference.description }}
+        </div>
+    </div>
+{% endblock %}

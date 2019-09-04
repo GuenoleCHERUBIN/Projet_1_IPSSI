@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Form\ConferenceType;
 use App\Entity\Conference;
 use App\Repository\ConferenceRepository;
+use App\Repository\VoteRepository;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,10 +41,38 @@ class ConferenceController extends AbstractController
     public function index(ConferenceRepository $conferenceRepository)
     {
         $conferences = $conferenceRepository->findAll();
+        $averageNote = [];
+        foreach ($conferences as $conference)
+        {
+            $values = [];
+            $votes = $conference->getVotes();
+            foreach ($votes as $vote)
+            {
+                $values[] = $vote->getValue();
+            }
+
+            //dd($values);
+            $average = array_sum($values)/count($values);
+            $averageNote[$conference->getId()] = $average;
+        }
+
 
         return $this->render('conference/index.html.twig',  [
 
             'conferences' => $conferences,
+            'average' => $averageNote,
         ]);
+    }
+    /**
+     * @Route("/conference/{id}", name="conference-show")
+     */
+    public function oneConference(int $id,ConferenceRepository $conferenceRepository)
+    {
+        $conference = $conferenceRepository->findOneBy(['id' => $id]);
+
+        return $this->render('conference/confSpe.html.twig', [
+            'conference' => $conference
+        ]);
+
     }
 }

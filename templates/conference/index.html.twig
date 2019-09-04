@@ -4,9 +4,15 @@
 
 {% block body %}
     <style>
+
+    .table
+    {
+        width: auto;
+        margin: auto;
+    }
     .table-title
     {
-        width: 150px;
+        width: 500px;
         height: 30px;
         background-color: darkgrey;
         color: white;
@@ -19,9 +25,11 @@
         text-align: center;
         background-color: white;
         color: black;
+        border: 1px black solid;
+        padding: 2px;
     }
     </style>
-    <table>
+    <table class="table">
         <tr>
             <th class="table-title">
                 Conference Title
@@ -29,14 +37,22 @@
             <th class="table-title">
                 Note
             </th>
+            <th class="table-title">
+                Creator
+            </th>
         </tr>
     {% for conference in conferences %}
+
         <tr>
             <td class="table-row">
-                {{ conference.title }}
+                <a href="/conference/{{ conference.id }}">{{ conference.title }}</a>
             </td>
             <td class="table-row">
-                {{ conference.description }}
+              {{ average[conference.id]}}
+
+            </td>
+            <td class="table-row">
+                {{ conference.creator.firstname }}
             </td>
         </tr>
 
