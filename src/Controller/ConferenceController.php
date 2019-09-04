@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Vote;
 use App\Form\ConferenceType;
 use App\Entity\Conference;
+use App\Form\VoteType;
 use App\Repository\ConferenceRepository;
-use App\Repository\VoteRepository;
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,19 +60,36 @@ class ConferenceController extends AbstractController
         return $this->render('conference/index.html.twig',  [
 
             'conferences' => $conferences,
-            'average' => $averageNote,
+            'average'     => $averageNote,
         ]);
     }
     /**
      * @Route("/conference/{id}", name="conference-show")
      */
-    public function oneConference(int $id,ConferenceRepository $conferenceRepository)
+    public function oneConference(int $id,ConferenceRepository $conferenceRepository,Request $request)
     {
         $conference = $conferenceRepository->findOneBy(['id' => $id]);
+        $vote= new Vote();
+        $form = $this->createForm(VoteType::class, $vote);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $vote->setUser($this->getUser());
+            $vote->setConference($conference);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($vote);
+            $entityManager->flush();
+        }
 
         return $this->render('conference/confSpe.html.twig', [
-            'conference' => $conference
+            'conference' => $conference,
+            'vote'       => $vote,
+            'form'       => $form->createView()
         ]);
 
     }
+
+
+
+
 }
