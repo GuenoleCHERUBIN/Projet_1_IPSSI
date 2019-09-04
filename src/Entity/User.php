@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -19,21 +21,25 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Assert\Email()
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $email;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
     private $password;
 
     /**
+     * @Assert\NotNull()
      * @ORM\Column(type="string", length=255)
      */
     private $firstname;
 
     /**
+     * @Assert\NotNull()
      * @ORM\Column(type="string", length=255)
      */
     private $lastname;
@@ -48,10 +54,16 @@ class User
      */
     private $votes;
 
+    /**
+     * @ORM\Column(type="simple_array")
+     */
+    private $roles = [];
+
     public function __construct()
     {
         $this->conferences = new ArrayCollection();
         $this->votes = new ArrayCollection();
+        $this->setRoles(["ROLE_USER"]);
     }
 
     public function getId(): ?int
@@ -165,6 +177,18 @@ class User
                 $vote->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
