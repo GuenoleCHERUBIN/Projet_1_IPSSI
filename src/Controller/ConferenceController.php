@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\ConferenceType;
 use App\Entity\Conference;
+use App\Repository\ConferenceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,9 +27,22 @@ class ConferenceController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->render('conference/index.html.twig', [
+        return $this->render('conference/conferenceAdd.html.twig', [
             'form' => $form->createView(),
 
+        ]);
+    }
+
+    /**
+     * @Route("/home", name="home")
+     */
+    public function index(ConferenceRepository $conferenceRepository)
+    {
+        $conferences = $conferenceRepository->findAll();
+
+        return $this->render('conference/index.html.twig',  [
+
+            'conferences' => $conferences,
         ]);
     }
 }

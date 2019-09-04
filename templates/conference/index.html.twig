@@ -1,14 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add a Conference!{% endblock %}
+{% block title %}Hello User!{% endblock %}
 
 {% block body %}
-<style>
+    <style>
+    .table-title
+    {
+        width: 150px;
+        height: 30px;
+        background-color: darkgrey;
+        color: white;
+        padding: 2px;
+        border: 1px black solid;
+        text-align: center;
+    }
+    .table-row
+    {
+        text-align: center;
+        background-color: white;
+        color: black;
+    }
+    </style>
+    <table>
+        <tr>
+            <th class="table-title">
+                Conference Title
+            </th>
+            <th class="table-title">
+                Note
+            </th>
+        </tr>
+    {% for conference in conferences %}
+        <tr>
+            <td class="table-row">
+                {{ conference.title }}
+            </td>
+            <td class="table-row">
+                {{ conference.description }}
+            </td>
+        </tr>
 
-</style>
-
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    {{ form_end(form) }}
-
+    {% endfor %}
+    </table>
 {% endblock %}
