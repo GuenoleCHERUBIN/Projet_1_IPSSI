@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Model\ORM\Mapping\UniqueConstraint;
+
+
 
 /**
  *
+ * @ORM\Table(name="vote",
+ *     uniqueConstraits={
+ *          @ORM\UniqueConstaint(name="vote_unique"),
+ *              columns={"user_id", "conference_id"})
  * @ORM\Entity(repositoryClass="VoteRepository")
  */
 class Vote

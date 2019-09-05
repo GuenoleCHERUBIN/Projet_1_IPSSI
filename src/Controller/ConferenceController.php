@@ -7,6 +7,7 @@ use App\Form\ConferenceType;
 use App\Entity\Conference;
 use App\Form\VoteType;
 use App\Repository\ConferenceRepository;
+use App\Repository\VoteRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -66,12 +67,13 @@ class ConferenceController extends AbstractController
     /**
      * @Route("/conference/{id}", name="conference-show")
      */
-    public function oneConference(int $id,ConferenceRepository $conferenceRepository,Request $request)
+    public function oneConference(int $id,ConferenceRepository $conferenceRepository,Request $request, VoteRepository $voteRepository)
     {
         $conference = $conferenceRepository->findOneBy(['id' => $id]);
         $vote= new Vote();
         $form = $this->createForm(VoteType::class, $vote);
         $form->handleRequest($request);
+        $voted = $voteRepository->findOneBy(['id' => $this->getUser()]);
         if ($form->isSubmitted() && $form->isValid())
         {
             $vote->setUser($this->getUser());
@@ -85,6 +87,35 @@ class ConferenceController extends AbstractController
             'conference' => $conference,
             'vote'       => $vote,
             'form'       => $form->createView()
+        ]);
+
+    }
+    /**
+     * @Route("/votedConf/{id}", name="votedConferences")
+     */
+    public function votedConf(VoteRepository $voteRepository,ConferenceRepository $conferenceRepository)
+    {
+        $voted = $voteRepository->findBy(['user' => $this->getUser()->getId()]);
+        $conferences = $conferenceRepository->findAll();
+        $averageNote = [];
+        foreach ($conferences as $conference)
+        {
+            $values = [];
+            $votes = $conference->getVotes();
+            foreach ($votes as $vote)
+            {
+                $values[] = $vote->getValue();
+            }
+
+            //dd($values);
+            $average = array_sum($values)/count($values);
+            $averageNote[$conference->getId()] = $average;
+        }
+
+        return $this->render('conference/votedConf.html.twig', [
+
+            'average'     => $averageNote,
+            'votes'       => $voted
         ]);
 
     }

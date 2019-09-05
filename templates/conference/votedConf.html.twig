@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello User!{% endblock %}
+
+{% block body %}
+    <style>
+
+        .table
+        {
+            width: auto;
+            margin: auto;
+        }
+        .table-title
+        {
+            width: 500px;
+            height: 30px;
+            background-color: darkgrey;
+            color: white;
+            padding: 2px;
+            border: 1px black solid;
+            text-align: center;
+        }
+        .table-row
+        {
+            text-align: center;
+            background-color: white;
+            color: black;
+            border: 1px black solid;
+            padding: 2px;
+        }
+    </style>
+    <table class="table">
+        <tr>
+            <th class="table-title">
+                Conference Title
+            </th>
+            <th class="table-title">
+                Note
+            </th>
+            <th class="table-title">
+                Creator
+            </th>
+        </tr>
+        {% for vote in votes %}
+
+            <tr>
+                <td class="table-row">
+                    <a href="/conference/{{ vote.conference.id }}">{{ vote.conference.title }}</a>
+                </td>
+                <td class="table-row">
+                    {{ average[vote.conference.id]}}
+
+                </td>
+                <td class="table-row">
+                    {{ vote.conference.creator.firstname }}
+                </td>
+            </tr>
+
+        {% endfor %}
+    </table>
+{% endblock %}
