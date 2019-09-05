@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Conference;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
 /**
  * @method Conference|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,7 +15,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class ConferenceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EntityManager $entityManager)
     {
         parent::__construct($registry, Conference::class);
     }
@@ -36,6 +37,34 @@ class ConferenceRepository extends ServiceEntityRepository
     }
     */
 
+    /**
+     * @return Conference[]
+     */
+    public function findNonVotedConf($votedIds)
+    {
+        foreach ($votedIds as $votedId){
+            return $this->createQueryBuilder('v')
+                ->andWhere('v.id != :votedId')
+                ->setParameter('votedId', $votedId)
+                ->getQuery()
+                ->getResult()
+                ;
+        }
+
+    }
+
+    /**
+     * @return Conference[]
+     */
+    public function searchConf($wordToSearch)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT *
+            FROM conference c
+            WHERE c.title LIKE '%':wordToSearch'%' ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['wordToSearch' => $wordToSearch]);
+    }
     /*
     public function findOneBySomeField($value): ?Conferences
     {

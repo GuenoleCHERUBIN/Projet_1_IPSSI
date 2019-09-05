@@ -42,19 +42,27 @@ class ConferenceController extends AbstractController
     public function index(ConferenceRepository $conferenceRepository)
     {
         $conferences = $conferenceRepository->findAll();
-        $averageNote = [];
-        foreach ($conferences as $conference)
-        {
-            $values = [];
-            $votes = $conference->getVotes();
-            foreach ($votes as $vote)
-            {
-                $values[] = $vote->getValue();
-            }
 
-            //dd($values);
-            $average = array_sum($values)/count($values);
-            $averageNote[$conference->getId()] = $average;
+            $averageNote = [];
+            foreach ($conferences as $conference)
+            {
+                $values = [];
+                $votes = $conference->getVotes();
+                foreach ($votes as $vote)
+                {
+                    $values[] = $vote->getValue();
+                }
+                if (!empty($values))//check if $values is empty to evoid dividing by 0
+                {
+                    //dd($values);
+                    $average = array_sum($values)/count($values);
+                    $averageNote[$conference->getId()] = $average;
+                }
+                else
+                {
+                    $averageNote[$conference->getId()] = "pas encore de note";
+                }
+
         }
 
 
@@ -63,6 +71,13 @@ class ConferenceController extends AbstractController
             'conferences' => $conferences,
             'average'     => $averageNote,
         ]);
+    }
+    /**
+     * @Route("/home/{string}",name="search")
+     */
+    public function search(string $wordToSearch)
+    {
+
     }
     /**
      * @Route("/conference/{id}", name="conference-show")
@@ -91,7 +106,7 @@ class ConferenceController extends AbstractController
 
     }
     /**
-     * @Route("/votedConf/{id}", name="votedConferences")
+     * @Route("/votedConf", name="votedConferences")
      */
     public function votedConf(VoteRepository $voteRepository,ConferenceRepository $conferenceRepository)
     {
@@ -120,7 +135,44 @@ class ConferenceController extends AbstractController
 
     }
 
+    /**
+     * @Route("/nonVotedConf", name="votedConferences")
+     */
+    public function nonVotedConf(VoteRepository $voteRepository,ConferenceRepository $conferenceRepository)
+    {
+        $votes = $voteRepository->findBy(['user' => $this->getUser()->getId()]);
 
 
+        $conferenceIds = [];
+        foreach ($votes as $vote) {
+
+            $conferenceIds[] = $vote->getConference()->getId();
+        }
+        //dd($conferenceIds);
+        $conferences = $conferenceRepository->findNonVotedConf($conferenceIds);
+        //dd($conferences);
+        $averageNote = [];
+        foreach ($conferences as $conference) {
+            $values = [];
+            $votes = $conference->getVotes();
+            foreach ($votes as $vote) {
+                $values[] = $vote->getValue();
+            }
+            if (!empty($values))//check if $values is empty to evoid dividing by 0
+            {
+                //dd($values);
+                $average = array_sum($values) / count($values);
+                $averageNote[$conference->getId()] = $average;
+            } else {
+                $averageNote[$conference->getId()] = "pas encore de note";
+            }
+        }
+            return $this->render('conference/nonVotedConf.html.twig', [
+                'average' => $averageNote,
+                'conferences' => $conferences
+            ]);
+
+
+    }
 
 }

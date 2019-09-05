@@ -7,10 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  *
- * @ORM\Table(name="vote",
- *     uniqueConstraits={
- *          @ORM\UniqueConstaint(name="vote_unique"),
- *              columns={"user_id", "conference_id"})
  * @ORM\Entity(repositoryClass="VoteRepository")
  */
 class Vote
