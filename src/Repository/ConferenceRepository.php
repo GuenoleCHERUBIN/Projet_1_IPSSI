@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityManager;
  */
 class ConferenceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, EntityManager $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Conference::class);
     }
@@ -58,12 +58,21 @@ class ConferenceRepository extends ServiceEntityRepository
      */
     public function searchConf($wordToSearch)
     {
-        $conn = $this->getEntityManager()->getConnection();
+
+        return $this->createQueryBuilder('c')
+                        ->where('c.title LIKE "%":wordToSearch"%"')
+                        ->setParameter('wordToSearch', $wordToSearch)
+                        ->getQuery()
+                        ->getResult()
+        ;
+
+       /* $conf = $this->getEntityManager()->getConnection();
         $sql = "SELECT *
             FROM conference c
             WHERE c.title LIKE '%':wordToSearch'%' ";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['wordToSearch' => $wordToSearch]);
+        return $stmt->fetchAll();*/
     }
     /*
     public function findOneBySomeField($value): ?Conferences

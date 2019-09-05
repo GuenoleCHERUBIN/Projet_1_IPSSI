@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Vote;
 use App\Form\ConferenceType;
 use App\Entity\Conference;
+use App\Form\SearchType;
 use App\Form\VoteType;
 use App\Repository\ConferenceRepository;
 use App\Repository\VoteRepository;
@@ -41,8 +42,20 @@ class ConferenceController extends AbstractController
      */
     public function index(ConferenceRepository $conferenceRepository)
     {
-        $conferences = $conferenceRepository->findAll();
+        if (isset($_GET['wordToSearch'])){
 
+            $wordToSearch = $_GET['wordToSearch'];
+
+            $conferences= $conferenceRepository->createQueryBuilder('c')
+                ->where('c.title LIKE :wordToSearch')
+                ->setParameter('wordToSearch', '%'.$wordToSearch.'%')
+                ->getQuery()
+                ->getResult()
+            ;
+
+        }else{
+            $conferences = $conferenceRepository->findAll();
+        }
             $averageNote = [];
             foreach ($conferences as $conference)
             {
@@ -72,13 +85,7 @@ class ConferenceController extends AbstractController
             'average'     => $averageNote,
         ]);
     }
-    /**
-     * @Route("/home/{string}",name="search")
-     */
-    public function search(string $wordToSearch)
-    {
 
-    }
     /**
      * @Route("/conference/{id}", name="conference-show")
      */
