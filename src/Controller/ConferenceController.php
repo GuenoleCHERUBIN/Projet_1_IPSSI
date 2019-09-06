@@ -128,10 +128,14 @@ class ConferenceController extends AbstractController
             {
                 $values[] = $vote->getValue();
             }
-
-            //dd($values);
-            $average = array_sum($values)/count($values);
-            $averageNote[$conference->getId()] = $average;
+            if (!empty($values))//check if $values is empty to evoid dividing by 0
+            {
+                //dd($values);
+                $average = array_sum($values) / count($values);
+                $averageNote[$conference->getId()] = $average;
+            } else {
+                $averageNote[$conference->getId()] = "pas encore de note";
+            }
         }
 
         return $this->render('conference/votedConf.html.twig', [
@@ -143,7 +147,7 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route("/nonVotedConf", name="votedConferences")
+     * @Route("/nonVotedConf", name="nonVotedConferences")
      */
     public function nonVotedConf(VoteRepository $voteRepository,ConferenceRepository $conferenceRepository)
     {
@@ -157,7 +161,7 @@ class ConferenceController extends AbstractController
         }
         //dd($conferenceIds);
         $conferences = $conferenceRepository->findNonVotedConf($conferenceIds);
-        //dd($conferences);
+        //dd($conferenceRepository->findNonVotedConf($conferenceIds));
         $averageNote = [];
         foreach ($conferences as $conference) {
             $values = [];

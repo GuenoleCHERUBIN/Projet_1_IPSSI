@@ -40,18 +40,18 @@ class ConferenceRepository extends ServiceEntityRepository
     /**
      * @return Conference[]
      */
-    public function findNonVotedConf($votedIds)
+    public function findNonVotedConf(array $votedIds)
     {
-        foreach ($votedIds as $votedId){
+            //dd($votedIds);
             return $this->createQueryBuilder('v')
-                ->andWhere('v.id != :votedId')
-                ->setParameter('votedId', $votedId)
+                ->andWhere('v.id NOT IN (:votedId)')
+                ->setParameter('votedId', $votedIds)
                 ->getQuery()
                 ->getResult()
                 ;
         }
 
-    }
+
 
     /**
      * @return Conference[]
