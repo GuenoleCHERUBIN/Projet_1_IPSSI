@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 
@@ -19,7 +20,13 @@ class Vote
     private $id;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 10,
+     *      minMessage = "Your rate must be at least {{ limit }}",
+     *      maxMessage = "Your rate cannot be higher than {{ limit }}"
+     * )
+     * @ORM\Column(type="integer")
      */
     private $value;
 

@@ -28,7 +28,30 @@
         border: 1px black solid;
         padding: 2px;
     }
+    .navigation
+    {
+        margin-left: 49%;
+    }
+
+    .pagination
+    {
+       align-items: center;
+    }
+
+        .page
+        {
+            font-size: 25px;
+            color: white;
+            text-decoration: none;
+        }
+        .current
+        {
+            font-size: 25px;
+            color: white;
+            text-decoration: none;
+        }
     </style>
+
     <table class="table">
         <tr>
             <th class="table-title">
@@ -58,4 +81,7 @@
 
     {% endfor %}
     </table>
+    <div class="navigation">
+        {{ knp_pagination_render(conferences) }}
+    </div>
 {% endblock %}

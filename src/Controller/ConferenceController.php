@@ -5,13 +5,13 @@ namespace App\Controller;
 use App\Entity\Vote;
 use App\Form\ConferenceType;
 use App\Entity\Conference;
-use App\Form\SearchType;
 use App\Form\VoteType;
 use App\Repository\ConferenceRepository;
 use App\Repository\VoteRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 class ConferenceController extends AbstractController
 {
@@ -40,7 +40,7 @@ class ConferenceController extends AbstractController
     /**
      * @Route("/home", name="home")
      */
-    public function index(ConferenceRepository $conferenceRepository)
+    public function index(PaginatorInterface $paginator,ConferenceRepository $conferenceRepository,Request $request)
     {
         if (isset($_GET['wordToSearch'])){
 
@@ -79,9 +79,16 @@ class ConferenceController extends AbstractController
         }
 
 
+            $this->paginator = $paginator;
+            $pagination = $this->paginator->paginate(
+                $conferences, /* query NOT result*/
+                $request->query->getInt('page', 1), /*page number*/
+                1 /*limite per page*/
+            );
+
         return $this->render('conference/index.html.twig',  [
 
-            'conferences' => $conferences,
+            'conferences' => $pagination,
             'average'     => $averageNote,
         ]);
     }
