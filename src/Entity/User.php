@@ -40,13 +40,12 @@ class User implements UserInterface
     private $firstname;
 
     /**
-     * @Assert\NotNull()
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $lastname;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Conference", mappedBy="creator")
+     * @ORM\OneToMany(targetEntity="App\Entity\Conference", mappedBy="creator", nullable=true)
      */
     private $conferences;
 
