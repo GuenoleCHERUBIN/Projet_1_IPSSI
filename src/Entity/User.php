@@ -34,8 +34,7 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @Assert\NotNull()
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $firstname;
 
@@ -45,7 +44,7 @@ class User implements UserInterface
     private $lastname;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Conference", mappedBy="creator", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Conference", mappedBy="creator")
      */
     private $conferences;
 
